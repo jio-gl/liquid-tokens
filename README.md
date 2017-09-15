@@ -1,10 +1,11 @@
+
 # A Library and Hub for Price-stable and more liquid ERC20 Smart Contract Tokens written in Solidity.
 
 ## Main design goals:
 
 * Use token supply rebasement to estabilize price a little and give or remove liquidity when is needed.
 * Use token activity, or other on-chain metrics to estimate changes on value.
-* Use lazy update of each wallet balance, when the owner desires.
+* Use lazy update of each wallet balance, when each wallet address owner desires.
 * Use ETH collateral to bootstrap the token.
 * Include a Pump&Dump protection through rebasement limits.
 
