@@ -56,7 +56,7 @@ contract LiquidToken {
 	// Events
 	event Transfer(address indexed _from, address indexed _to, uint256 _value);
 
-	function Toroid() {
+	function LiquidToken() {
 		creationDate = now / secondsPerPeriod; // alias of block.timestamp,
 		// translated to days since
 		// epoch
