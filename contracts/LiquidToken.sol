@@ -201,10 +201,6 @@ contract LiquidToken {
 		return fundBalances[msg.sender];
 	}
 
-	function nowSeconds() external returns (uint256 nowSeconds) {
-		return now ;
-	}
-
 	function fund() payable returns (bool success) {
 		// updateBalance(msg.sender) ; // to avoid funding of past rebasements
 		// in case of price falling.
