@@ -1,5 +1,6 @@
 pragma solidity ^0.4.11;
 
+import "./ERC20.sol";
 
 contract LiquidToken {
 
@@ -48,6 +49,10 @@ contract LiquidToken {
 	uint public totalTokenBase ; 
 	uint public transactions ; 
 	bool public releaseFunds = false ; // release funds if 1
+	
+	// data for Allowance from ERC20 interface
+	// Owner of account approves the transfer of an amount to another account
+	mapping(address => mapping (address => uint256)) allowed;
 
 	// Token Options for Team
 	address[] public teamWallet =  [0xD630D5D64D9780ae60A0115128181b6327E25dC3, 0x389652727eDb184a18f5fB90862048515d3636A6];
@@ -191,11 +196,6 @@ contract LiquidToken {
 		return baseScale;
 	}
 
-	function balanceOf(address addr) external returns (uint256 balance) {
-		// updateBalance(addr) ;
-		return balances[addr];
-	}
-
 	function fundBalanceOf() external returns (uint256 balance) {
 		// updateBalance(addr) ;
 		return fundBalances[msg.sender];
@@ -268,8 +268,8 @@ contract LiquidToken {
 		return true;
 	}
 
-	// function transfer(address _to, uint256 _value) returns (bool success) {
-	function sendCoin(address _to, uint _value) 
+	function transfer(address _to, uint256 _value) 
+	//function sendCoin(address _to, uint _value) 
 	updateCurrentPeriod()
 	returns(bool success)
 	{
@@ -283,14 +283,19 @@ contract LiquidToken {
 		// if (balances[msg.sender] >= _value && balances[_to] + _value >
 		// balances[_to]) {
 		if (balances[msg.sender] >= _value && _value > 0) {
+		    
 			balances[msg.sender] -= _value;
 			balances[_to] += _value;
 			Transfer(msg.sender, _to, _value);
 			periodTransactions[currentPeriod] += 1 ;
 			transactions += 1 ;
-
+            Transfer(msg.sender, _to, _value);
 			return true;
-		} else { return false; }
+			
+		} else { 
+		    return false; 
+		    
+		}
 	}
 
 	// A big pool of resilient friends will poll this method
@@ -311,10 +316,58 @@ contract LiquidToken {
 		lastUpdateGlobal = currentPeriod ; 
 
 	}
+	
+	// CONSTANT FUNCTIONS
 
-	function getBalance(address addr) returns(uint) {
-		return balances[addr];
+    function totalSupply() constant returns (uint supply) {
+        return totalTokenBase;
+    }
+
+    function balanceOf(address _owner) constant returns (uint balance) {
+		return balances[_owner];
 	}
+	
+
+    function nowSeconds() constant returns (uint256 timestamp){
+         return now;
+     }
+     
+
+	// NOT IMPLEMENTED
+	
+    function transferFrom(
+         address _from,
+         address _to,
+         uint256 _amount
+     ) returns (bool success) {
+         
+        // check the balances are up-to-date, rebasement updated.
+		updateBalance(_from) ;
+		updateBalance(_to) ;
+
+        if (balances[_from] >= _amount
+             && allowed[_from][msg.sender] >= _amount
+             && _amount > 0
+             && balances[_to] + _amount > balances[_to]) {
+             balances[_from] -= _amount;
+             allowed[_from][msg.sender] -= _amount;
+             balances[_to] += _amount;
+             return true;
+        } else {
+            return false;
+        }
+    }
+
+    // Allow _spender to withdraw from your account, multiple times, up to the _value amount.
+    // If this function is called again it overwrites the current allowance with _value.
+    function approve(address _spender, uint256 _amount) returns (bool success) {
+         allowed[msg.sender][_spender] = _amount;
+         return true;
+    }
+
+    function allowance(address _owner, address _spender) constant returns (uint256 remaining) {
+        return allowed[_owner][_spender];
+    }
 
 
 }

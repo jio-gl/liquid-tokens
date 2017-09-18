@@ -28,18 +28,18 @@ contract('LiquidToken', function(accounts) {
       meta = instance;
       return meta.fund({from: account_one, value: 1});
     }).then(function(balance) {
-      return meta.getBalance.call(account_one);
+      return meta.balanceOf.call(account_one);
     }).then(function(balance) {
       account_one_starting_balance = balance.toNumber();
-      return meta.getBalance.call(account_two);
+      return meta.balanceOf.call(account_two);
     }).then(function(balance) {
       account_two_starting_balance = balance.toNumber();
-      return meta.sendCoin(account_two, amount, {from: account_one});
+      return meta.transfer(account_two, amount, {from: account_one});
     }).then(function() {
-      return meta.getBalance.call(account_one);
+      return meta.balanceOf.call(account_one);
     }).then(function(balance) {
       account_one_ending_balance = balance.toNumber();
-      return meta.getBalance.call(account_two);
+      return meta.balanceOf.call(account_two);
     }).then(function(balance) {
       account_two_ending_balance = balance.toNumber();
 
@@ -52,7 +52,7 @@ contract('LiquidToken', function(accounts) {
 	// original Metacoin tests below
 	it("should put 1 LiquidToken in the first account", function() {
     return LiquidToken.deployed().then(function(instance) {
-      return instance.getBalance.call(accounts[0]);
+      return instance.balanceOf.call(accounts[0]);
     }).then(function(balance) {
       assert.equal(balance.valueOf(), 0, "0 wasn't in the first account");
     });
@@ -73,9 +73,9 @@ contract('LiquidToken', function(accounts) {
 		  return trd.refund({from: account_zero, value: 10});
 	    }).then(function() {
 			// Throw some events to upate blockchain state (needed for testrpc)
-		  return trd.sendCoin(account_three, amount, {from: account_four});
+		  return trd.transfer(account_three, amount, {from: account_four});
 	    }).then(function(success) {
-      return trd.sendCoin(account_four, amount, {from: account_three});
+      return trd.transfer(account_four, amount, {from: account_three});
 	    }).then(function() {
 			// end of event throwing
       return trd.fundBalanceOf.call({from: account_zero});
@@ -96,9 +96,9 @@ contract('LiquidToken', function(accounts) {
 	      return instance.fund({from: account_one, value: 10});
 	    }).then(function() {
 			// Throw some events to upate blockchain state (needed for testrpc)
-		  return meta.sendCoin(account_three, amount, {from: account_four});
+		  return meta.transfer(account_three, amount, {from: account_four});
 	    }).then(function(success) {
-      return meta.sendCoin(account_four, amount, {from: account_three});
+      return meta.transfer(account_four, amount, {from: account_three});
 	    }).then(function() {
 			// end of event throwing
       return meta.fundBalanceOf({from: account_one});
@@ -110,9 +110,9 @@ contract('LiquidToken', function(accounts) {
 		  return meta.refund({from: account_one, value: 10});
 	    }).then(function() {
 			// Throw some events to upate blockchain state (needed for testrpc)
-		  return meta.sendCoin(account_three, amount, {from: account_four});
+		  return meta.transfer(account_three, amount, {from: account_four});
 	    }).then(function(success) {
-      return meta.sendCoin(account_four, amount, {from: account_three});
+      return meta.transfer(account_four, amount, {from: account_three});
 	    }).then(function() {
 			// end of event throwing
       return meta.fundBalanceOf.call({from: account_one});
@@ -136,37 +136,37 @@ contract('LiquidToken', function(accounts) {
       sleep.sleep( periodSeconds );	
 		  return meta.fundBalanceOf ({from: account_one});
 	    }).then(function(availableEther) {
-      return meta.sendCoin(account_two, amount, {from: account_one});
+      return meta.transfer(account_two, amount, {from: account_one});
       }).then(function() {
-	    return meta.sendCoin(account_one, amount, {from: account_two});
+	    return meta.transfer(account_one, amount, {from: account_two});
 	    }).then(function(success) {
-	    return meta.sendCoin(account_two, amount, {from: account_one});
+	    return meta.transfer(account_two, amount, {from: account_one});
 	    }).then(function(success) {
-	    return meta.sendCoin(account_one, amount, {from: account_two});
+	    return meta.transfer(account_one, amount, {from: account_two});
 	    }).then(function(success) {
 
 		  return meta.nowSeconds ();
-	    }).then(function(now) {
+	    }).then(function(nowSeconds) {
 		  sleep.sleep( 2 );	
 
-		  return meta.sendCoin(account_two, amount, {from: account_one});
+		  return meta.transfer(account_two, amount, {from: account_one});
 	    }).then(function(success) {
-	        return meta.sendCoin(account_one, amount, {from: account_two});
+	        return meta.transfer(account_one, amount, {from: account_two});
 	    }).then(function(success) {
-			  return meta.sendCoin(account_two, amount, {from: account_one});
+			  return meta.transfer(account_two, amount, {from: account_one});
 	    }).then(function(success) {
-	        return meta.sendCoin(account_one, amount, {from: account_two});
+	        return meta.transfer(account_one, amount, {from: account_two});
 	    }).then(function(success) {
 
 	    	return meta.nowSeconds ();
-	    }).then(function(now) {
+	    }).then(function(nowSeconds) {
 		
 		  return meta.refund({from: account_one, value: 10});
 	    }).then(function() {
 			// Throw some events to upate blockchain state (needed for testrpc)
-		  return trd.sendCoin(account_three, amount, {from: account_four});
+		  return trd.transfer(account_three, amount, {from: account_four});
 	    }).then(function(success) {
-      return trd.sendCoin(account_four, amount, {from: account_three});
+      return trd.transfer(account_four, amount, {from: account_three});
 	    }).then(function() {
 			// end of event throwing
 
@@ -197,30 +197,30 @@ contract('LiquidToken', function(accounts) {
       return meta.currentPeriod ({from: account_one});
 	    }).then(function(currentPeriod) {
 	
-          return meta.sendCoin(account_three, amount, {from: account_four});
+          return meta.transfer(account_three, amount, {from: account_four});
 	    }).then(function() {
-	        return meta.sendCoin(account_four, amount, {from: account_three});
+	        return meta.transfer(account_four, amount, {from: account_three});
 	    }).then(function(success) {
-	          return meta.sendCoin(account_three, amount, {from: account_four});
+	          return meta.transfer(account_three, amount, {from: account_four});
 	    }).then(function(success) {
-	        return meta.sendCoin(account_four, amount, {from: account_three});
+	        return meta.transfer(account_four, amount, {from: account_three});
 	    }).then(function(success) {
 
 		  return meta.nowSeconds ();
-	    }).then(function(now) {
+	    }).then(function(nowSeconds) {
 	      sleep.sleep( 4 );	
 
-		  return meta.sendCoin(account_three, amount, {from: account_four});
+		  return meta.transfer(account_three, amount, {from: account_four});
 	    }).then(function(success) {
-	        return meta.sendCoin(account_four, amount, {from: account_three});
+	        return meta.transfer(account_four, amount, {from: account_three});
 	    }).then(function(success) {
-			  return meta.sendCoin(account_three, amount, {from: account_four});
+			  return meta.transfer(account_three, amount, {from: account_four});
 	    }).then(function(success) {
-	        return meta.sendCoin(account_four, amount, {from: account_three});
+	        return meta.transfer(account_four, amount, {from: account_three});
 	    }).then(function(success) {
 
 	    	return meta.nowSeconds ();
-	    }).then(function(now) {
+	    }).then(function(nowSeconds) {
 	
 			return meta.currentPeriod ({from: account_one});
 	    }).then(function(currentPeriod) {
@@ -232,9 +232,9 @@ contract('LiquidToken', function(accounts) {
 	    }).then(function() {
 
 			// Throw some events to upate blockchain state (needed for testrpc)
-		  return meta.sendCoin(account_three, amount, {from: account_four});
+		  return meta.transfer(account_three, amount, {from: account_four});
 	    }).then(function(success) {
-      return meta.sendCoin(account_four, amount, {from: account_three});
+      return meta.transfer(account_four, amount, {from: account_three});
 	    }).then(function() {
 			// end of event throwing
 
