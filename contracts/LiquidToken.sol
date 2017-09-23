@@ -2,7 +2,7 @@ pragma solidity ^0.4.11;
 
 import "./ERC20.sol";
 
-contract LiquidToken {
+contract LiquidToken is ERC20 {
 
 	uint constant secondsPerPeriod = 2 ;// 60*60*24; // example: one day
 	// to avoid race conditions and high-frequency funding and refunding.
